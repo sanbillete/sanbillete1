@@ -1,51 +1,46 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
-# Configuración de la página
+# Configuración SANBILLETE
 st.set_page_config(page_title="SANBILLETE - Control Maestro", layout="wide")
-
-# Título Principal
 st.title("🚀 SANBILLETE: Saneamos su Motor Financiero")
+
+# --- MEMORIA DEL SISTEMA ---
+if 'gastos_lista' not in st.session_state:
+    st.session_state['gastos_lista'] = []
+if 'presupuesto_total' not in st.session_state:
+    st.session_state['presupuesto_total'] = 10000.0
+
+# --- BARRA LATERAL (ALIMENTACIÓN) ---
+st.sidebar.header("🕹️ Centro de Mandos")
+st.sidebar.subheader("Registrar Nuevo Gasto")
+
+concepto = st.sidebar.text_input("¿En qué se la gastó? (Ej: Tinto)")
+valor = st.sidebar.number_input("¿Cuánto le costó?", min_value=0.0, step=500.0)
+
+if st.sidebar.button("💸 ¡Registrar Gasto!"):
+    if concepto and valor > 0:
+        st.session_state['gastos_lista'].append({"Concepto": concepto, "Valor": valor})
+        st.sidebar.success(f"¡{concepto} registrado!")
+    else:
+        st.sidebar.error("Socio, ponga el nombre y el valor.")
+
+# --- CÁLCULOS EN VIVO ---
+df_gastos = pd.DataFrame(st.session_state['gastos_lista'])
+total_gastado = df_gastos['Valor'].sum() if not df_gastos.empty else 0.0
+saldo_restante = st.session_state['presupuesto_total'] - total_gastado
+
+# --- TABLERO PRINCIPAL ---
+col1, col2, col3 = st.columns(3)
+col1.metric("Presupuesto Inicial", f"${st.session_state['presupuesto_total']:,}")
+col2.metric("Gastos Acumulados", f"${total_gastado:,}", delta=f"-{total_gastado}", delta_color="inverse")
+col3.metric("Munición Restante (Saldo)", f"${saldo_restante:,}")
+
 st.markdown("---")
 
-# Barra lateral para navegación
-st.sidebar.header("Menú de Operaciones")
-opcion = st.sidebar.selectbox("Seleccione una función", ["Tablero Principal", "Carga de Datos", "Reportes"])
-
-# Contenido Principal
-if opcion == "Tablero Principal":
-    st.subheader("📊 Estado de la Misión")
-    
-    # Métricas en columnas
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Presupuesto", "$10,000", "+5%")
-    col2.metric("Gastos Operativos", "$4,500", "-2%")
-    col3.metric("Margen de Victoria", "55%", "¡Excelente!")
-
-    st.markdown("---")
-    
-    # GRÁFICAS VISUALES
-    col_a, col_b = st.columns(2)
-    
-    with col_a:
-        st.write("### 📈 Tendencia de Gastos")
-        chart_data = pd.DataFrame(np.random.randn(20, 3), columns=['Nómina', 'Servicios', 'Marketing'])
-        st.line_chart(chart_data)
-        
-    with col_b:
-        st.write("### 📊 Distribución de Inversión")
-        progreso_data = pd.DataFrame({'Categoría': ['Inversión', 'Reserva', 'Gastos'], 'Valor': [40, 30, 30]})
-        st.bar_chart(progreso_data.set_index('Categoría'))
-
-    st.info("El motor SANBILLETE está operando a máxima potencia. ¡Listo para el despegue!")
-
-elif opcion == "Carga de Datos":
-    st.subheader("📥 Ingreso de Artillería (Datos)")
-    archivo = st.file_uploader("Suba su archivo de Excel o CSV", type=["xlsx", "csv"])
-    if archivo:
-        st.success("¡Munición cargada con éxito!")
-
+if not df_gastos.empty:
+    st.subheader("📝 Bitácora de Movimientos")
+    st.table(df_gastos)
+    st.bar_chart(df_gastos.set_index("Concepto"))
 else:
-    st.subheader("📑 Reportes del Cuartel")
-    st.write("Generando informes estratégicos para la toma de decisiones.")
+    st.info("Socio, el motor está limpio. Empiece a registrar sus tintos y parqueaderos a la izquierda.")
