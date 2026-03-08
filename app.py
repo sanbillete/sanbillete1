@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from PIL import Image
 
-# Configuración Global
+# Configuración Global Pro
 st.set_page_config(page_title="SANBILLETE | Auditoría Pro", layout="wide", page_icon="💰")
 
 # --- SEGURIDAD ---
@@ -41,24 +40,25 @@ if check_password():
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎙️ Voice & Photo / Voz y Foto")
     
-    # Registro de datos
+    # Entradas de Datos
     concepto = st.sidebar.text_input("Concept / Concepto:")
     valor = st.sidebar.number_input("Amount / Valor ($):", min_value=0.0)
     
-    # MÁS BIEN AQUÍ ACTIVAMOS LA CÁMARA:
+    # MÁS BIEN AQUÍ ACTIVAMOS EL LENTE:
     foto_recibo = st.sidebar.camera_input("📸 Take Receipt Photo / Foto del Recibo")
 
     if st.sidebar.button("✅ RECORD / GRABAR TODO"):
         if concepto and valor > 0:
             ahora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            # Registramos si tiene foto o no para la auditoría
             registro = {
                 "Timestamp": ahora, 
                 "Concept": concepto.upper(), 
                 "Amount": valor,
-                "Has Photo": "YES ✅" if foto_recibo else "NO ❌"
+                "Photo Evidence": "YES ✅" if foto_recibo else "NO ❌"
             }
             st.session_state['gastos_lista'].append(registro)
-            st.sidebar.success("Recorded with Evidence / Grabado con Evidencia")
+            st.sidebar.success("Recorded with Evidence / Grabado con Éxito")
         else:
             st.sidebar.warning("Missing data / Faltan datos")
 
@@ -75,8 +75,9 @@ if check_password():
     st.markdown("---")
 
     if not df.empty:
-        st.subheader("📋 Audit Log / Bitácora con Evidencia")
+        st.subheader("📋 Audit Log / Bitácora de Auditoría")
         st.dataframe(df, use_container_width=True)
         
+        # Más bien entregue el Excel limpio
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("📥 DOWNLOAD REPORT / DESCARGAR EXCEL", data=csv, file_name='sanbillete_audit.csv', mime='text/csv')
