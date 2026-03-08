@@ -8,14 +8,16 @@ st.title("🚀 SANBILLETE: Saneamos su Motor Financiero")
 # --- MEMORIA DEL SISTEMA ---
 if 'gastos_lista' not in st.session_state:
     st.session_state['gastos_lista'] = []
-if 'presupuesto_total' not in st.session_state:
-    st.session_state['presupuesto_total'] = 10000.0
 
-# --- BARRA LATERAL (ALIMENTACIÓN) ---
+# --- BARRA LATERAL (CONTROL DEL CLIENTE) ---
 st.sidebar.header("🕹️ Centro de Mandos")
-st.sidebar.subheader("Registrar Nuevo Gasto")
 
-concepto = st.sidebar.text_input("¿En qué se la gastó? (Ej: Tinto)")
+# AQUÍ EL CLIENTE PONE SU PROPIO PRESUPUESTO
+presupuesto_cliente = st.sidebar.number_input("💰 Defina su Presupuesto Total:", min_value=0.0, value=6000000.0, step=100000.0)
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("Registrar Nuevo Gasto")
+concepto = st.sidebar.text_input("¿En qué se la gastó? (Ej: Parqueadero)")
 valor = st.sidebar.number_input("¿Cuánto le costó?", min_value=0.0, step=500.0)
 
 if st.sidebar.button("💸 ¡Registrar Gasto!"):
@@ -28,13 +30,13 @@ if st.sidebar.button("💸 ¡Registrar Gasto!"):
 # --- CÁLCULOS EN VIVO ---
 df_gastos = pd.DataFrame(st.session_state['gastos_lista'])
 total_gastado = df_gastos['Valor'].sum() if not df_gastos.empty else 0.0
-saldo_restante = st.session_state['presupuesto_total'] - total_gastado
+saldo_restante = presupuesto_cliente - total_gastado
 
 # --- TABLERO PRINCIPAL ---
 col1, col2, col3 = st.columns(3)
-col1.metric("Presupuesto Inicial", f"${st.session_state['presupuesto_total']:,}")
-col2.metric("Gastos Acumulados", f"${total_gastado:,}", delta=f"-{total_gastado}", delta_color="inverse")
-col3.metric("Munición Restante (Saldo)", f"${saldo_restante:,}")
+col1.metric("Presupuesto de Misión", f"${presupuesto_cliente:,.0f}")
+col2.metric("Gastos Acumulados", f"${total_gastado:,.0f}", delta=f"-{total_gastado:,.0f}", delta_color="inverse")
+col3.metric("Munición Restante (Saldo)", f"${saldo_restante:,.0f}")
 
 st.markdown("---")
 
@@ -43,4 +45,4 @@ if not df_gastos.empty:
     st.table(df_gastos)
     st.bar_chart(df_gastos.set_index("Concepto"))
 else:
-    st.info("Socio, el motor está limpio. Empiece a registrar sus tintos y parqueaderos a la izquierda.")
+    st.info("Socio, el motor está limpio. Defina su presupuesto y empiece a registrar gastos a la izquierda.")
