@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from PIL import Image
 
 # Configuración Global
 st.set_page_config(page_title="SANBILLETE | Auditoría Pro", layout="wide", page_icon="💰")
 
-# --- SEGURIDAD / SECURITY ---
+# --- SEGURIDAD ---
 def check_password():
     if "password_correct" not in st.session_state:
         st.title("🔒 ACCESS CONTROL / CONTROL DE ACCESO")
@@ -20,6 +21,7 @@ def check_password():
     return True
 
 if check_password():
+    # Estilo de tarjetas blancas ejecutivas
     st.markdown("""
         <style>
         .main { background-color: #f5f7f9; }
@@ -37,19 +39,30 @@ if check_password():
     presupuesto = st.sidebar.number_input("💰 Budget / Presupuesto:", min_value=0.0, value=6000000.0)
 
     st.sidebar.markdown("---")
-    st.sidebar.subheader("🎙️ Voice Report / Reporte por Voz")
+    st.sidebar.subheader("🎙️ Voice & Photo / Voz y Foto")
+    
+    # Registro de datos
     concepto = st.sidebar.text_input("Concept / Concepto:")
     valor = st.sidebar.number_input("Amount / Valor ($):", min_value=0.0)
+    
+    # MÁS BIEN AQUÍ ACTIVAMOS LA CÁMARA:
+    foto_recibo = st.sidebar.camera_input("📸 Take Receipt Photo / Foto del Recibo")
 
-    if st.sidebar.button("✅ RECORD / GRABAR"):
+    if st.sidebar.button("✅ RECORD / GRABAR TODO"):
         if concepto and valor > 0:
             ahora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            st.session_state['gastos_lista'].append({"Timestamp": ahora, "Concept": concepto.upper(), "Amount": valor})
-            st.sidebar.success("Recorded / Grabado")
+            registro = {
+                "Timestamp": ahora, 
+                "Concept": concepto.upper(), 
+                "Amount": valor,
+                "Has Photo": "YES ✅" if foto_recibo else "NO ❌"
+            }
+            st.session_state['gastos_lista'].append(registro)
+            st.sidebar.success("Recorded with Evidence / Grabado con Evidencia")
         else:
             st.sidebar.warning("Missing data / Faltan datos")
 
-    # --- EXECUTIVE DASHBOARD ---
+    # --- TABLERO EJECUTIVO ---
     df = pd.DataFrame(st.session_state['gastos_lista'])
     total = df['Amount'].sum() if not df.empty else 0.0
     saldo = presupuesto - total
@@ -62,12 +75,8 @@ if check_password():
     st.markdown("---")
 
     if not df.empty:
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            st.subheader("📋 Audit Log / Bitácora")
-            st.dataframe(df, use_container_width=True)
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("📥 DOWNLOAD REPORT / DESCARGAR EXCEL", data=csv, file_name='sanbillete_audit.csv', mime='text/csv')
-        with col2:
-            st.subheader("📊 Analytics / Análisis")
-            st.bar_chart(df.set_index("Concept")["Amount"])
+        st.subheader("📋 Audit Log / Bitácora con Evidencia")
+        st.dataframe(df, use_container_width=True)
+        
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button("📥 DOWNLOAD REPORT / DESCARGAR EXCEL", data=csv, file_name='sanbillete_audit.csv', mime='text/csv')
