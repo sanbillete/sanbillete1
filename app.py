@@ -12,7 +12,7 @@ if 'gastos_lista' not in st.session_state:
 # --- BARRA LATERAL (CONTROL DEL CLIENTE) ---
 st.sidebar.header("🕹️ Centro de Mandos")
 
-# AQUÍ EL CLIENTE PONE SU PROPIO PRESUPUESTO
+# EL CLIENTE DEFINE SU PODER
 presupuesto_cliente = st.sidebar.number_input("💰 Defina su Presupuesto Total:", min_value=0.0, value=6000000.0, step=100000.0)
 
 st.sidebar.markdown("---")
@@ -43,6 +43,16 @@ st.markdown("---")
 if not df_gastos.empty:
     st.subheader("📝 Bitácora de Movimientos")
     st.table(df_gastos)
+    
+    # BOTÓN DE DESCARGA (La Joya de la Corona)
+    csv = df_gastos.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Descargar Reporte de Gastos (CSV)",
+        data=csv,
+        file_name='reporte_sanbillete.csv',
+        mime='text/csv',
+    )
+    
     st.bar_chart(df_gastos.set_index("Concepto"))
 else:
     st.info("Socio, el motor está limpio. Defina su presupuesto y empiece a registrar gastos a la izquierda.")
