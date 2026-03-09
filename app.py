@@ -20,7 +20,6 @@ def check_password():
     return True
 
 if check_password():
-    # Estilo de tarjetas blancas ejecutivas
     st.markdown("""
         <style>
         .main { background-color: #f5f7f9; }
@@ -40,17 +39,13 @@ if check_password():
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎙️ Voice & Photo / Voz y Foto")
     
-    # Entradas de Datos
     concepto = st.sidebar.text_input("Concept / Concepto:")
     valor = st.sidebar.number_input("Amount / Valor ($):", min_value=0.0)
-    
-    # MÁS BIEN AQUÍ ACTIVAMOS EL LENTE:
     foto_recibo = st.sidebar.camera_input("📸 Take Receipt Photo / Foto del Recibo")
 
     if st.sidebar.button("✅ RECORD / GRABAR TODO"):
         if concepto and valor > 0:
             ahora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            # Registramos si tiene foto o no para la auditoría
             registro = {
                 "Timestamp": ahora, 
                 "Concept": concepto.upper(), 
@@ -74,10 +69,18 @@ if check_password():
 
     st.markdown("---")
 
+    # --- MÁS BIEN AQUÍ VOLVEMOS A PONER LOS GRÁFICOS ---
     if not df.empty:
-        st.subheader("📋 Audit Log / Bitácora de Auditoría")
-        st.dataframe(df, use_container_width=True)
+        col_tabla, col_grafico = st.columns([1.2, 0.8]) # Dividimos la pantalla
         
-        # Más bien entregue el Excel limpio
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button("📥 DOWNLOAD REPORT / DESCARGAR EXCEL", data=csv, file_name='sanbillete_audit.csv', mime='text/csv')
+        with col_tabla:
+            st.subheader("📋 Audit Log / Bitácora de Auditoría")
+            st.dataframe(df, use_container_width=True)
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 DOWNLOAD REPORT / DESCARGAR EXCEL", data=csv, file_name='sanbillete_audit.csv', mime='text/csv')
+        
+        with col_grafico:
+            st.subheader("📊 Analytics / Análisis Visual")
+            # Agrupamos por concepto para que el gráfico sea elegante
+            chart_data = df.groupby("Concept")["Amount"].sum()
+            st.bar_chart(chart_data)
