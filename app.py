@@ -10,6 +10,7 @@ st.set_page_config(page_title="JDS | Global Audit", layout="wide", page_icon="âš
 USERS = {
     "admin": "JDS2026",
     "socio1": "CLAVE01",
+    "juan": "JDS777",
     "afiliado_usa": "MIAMI2026"
 }
 
