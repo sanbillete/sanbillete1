@@ -75,7 +75,7 @@ if check_password():
 
         # Dashboard Visual
         c1, c2, c3 = st.columns(3)
-        c1.metric("PRESUPUESTO"., f"${presupuesto:,.2f}")
+        c1.metric("PRESUPUESTO", f"${presupuesto:,.2f}")
         c2.metric("GASTADO", f"${total_user:,.2f}", delta=f"-{total_user:,.2f}", delta_color="inverse")
         c3.metric("DISPONIBLE", f"${saldo_user:,.2f}")
         st.markdown("---")
