@@ -16,16 +16,16 @@ USERS = {
 
 def check_password():
     if "user_authenticated" not in st.session_state:
-        st.title("🔐 JDS CONSULTING GROUP | LOGIN")
-        user = st.text_input("User / Usuario:")
-        password = st.text_input("Password / Contraseña:", type="password")
+        st.title("🔑 JDS CONSULTING | ACCESO".)
+        user = st.text_input("Usuario:".)
+        password = st.text_input("Contraseña:")
         
-        if st.button("🚀 ENTER / ENTRAR"):
+        if st.button("🚀 INGRESAR".):
             if user in USERS and USERS[user] == password:
                 st.session_state["user_authenticated"] = user
                 st.rerun()
             else:
-                st.error("❌ Access Denied / Acceso Denegado")
+                st.error("❌ ¡Llave incorrecta, Socio!".)
         return False
     return True
 
@@ -67,7 +67,7 @@ if check_password():
     # --- FILTRO DE PRIVACIDAD (Ingeniería JDS) ---
     # Solo mostramos los gastos del usuario que está logueado
     df_all = pd.DataFrame(st.session_state['master_log'])
-    
+    st.success("¡Gasto grabado con éxito! ✅")
     if not df_all.empty:
         df_user = df_all[df_all['User'] == current_user]
         total_user = df_user['Amount'].sum()
