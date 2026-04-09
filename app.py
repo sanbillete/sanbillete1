@@ -25,7 +25,7 @@ def check_password():
                 st.session_state["user_authenticated"] = user
                 st.rerun()
             else:
-                st.error("❌ ¡Llave incorrecta, Socio!".)
+                st.error("❌ ¡Llave incorrecta, Socio!")
         return False
     return True
 
