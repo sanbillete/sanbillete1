@@ -16,7 +16,7 @@ USERS = {
 
 def check_password():
     if "user_authenticated" not in st.session_state:
-        st.title("🔑 JDS CONSULTING | ACCESO".)
+        st.title("🔑 JDS CONSULTING | ACCESO")
         user = st.text_input("Usuario:".)
         password = st.text_input("Contraseña:")
         
@@ -75,10 +75,9 @@ if check_password():
 
         # Dashboard Visual
         c1, c2, c3 = st.columns(3)
-        c1.metric("BUDGET", f"${presupuesto:,.2f}")
-        c2.metric("SPENT", f"${total_user:,.2f}", delta=f"-{total_user:,.2f}", delta_color="inverse")
-        c3.metric("AVAILABLE", f"${saldo_user:,.2f}")
-
+        c1.metric("PRESUPUESTO"., f"${presupuesto:,.2f}")
+        c2.metric("GASTADO", f"${total_user:,.2f}", delta=f"-{total_user:,.2f}", delta_color="inverse")
+        c3.metric("DISPONIBLE", f"${saldo_user:,.2f}")
         st.markdown("---")
         
         col_t, col_g = st.columns([1.2, 0.8])
