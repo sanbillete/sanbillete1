@@ -17,7 +17,7 @@ USERS = {
 def check_password():
     if "user_authenticated" not in st.session_state:
         st.title("🔑 JDS CONSULTING | ACCESO")
-        user = st.text_input("Usuario:".)
+        user = st.text_input("Usuario:")
         password = st.text_input("Contraseña:")
         
         if st.button("🚀 INGRESAR".):
