@@ -60,7 +60,7 @@ if check_password():
                 "Photo": "YES ✅" if foto_recibo else "NO ❌"
             }
             st.session_state['master_log'].append(registro)
-            st.sidebar.success("Recorded! / ¡Grabado!")
+            st.sidebar.success("¡Gasto grabado con éxito! ✅")
         else:
             st.sidebar.warning("Missing data")
 
