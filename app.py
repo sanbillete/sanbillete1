@@ -20,7 +20,7 @@ def check_password():
         user = st.text_input("Usuario:")
         password = st.text_input("Contraseña:")
         
-        if st.button("🚀 INGRESAR".):
+        if st.button("🚀 INGRESAR"):
             if user in USERS and USERS[user] == password:
                 st.session_state["user_authenticated"] = user
                 st.rerun()
